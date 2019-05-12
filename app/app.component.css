@@ -1,0 +1,120 @@
+.example-icon {padding: 0 14px;}
+.example-spacer 
+{
+  flex: 1 1 auto;
+}
+
+.progressbar 
+{
+  margin:10px;
+  margin: auto;
+  width: 50% !important;
+  align-content: center !important;
+}
+
+table 
+{
+  width: 100%;
+  margin-top: 2px;
+}
+  
+mat-paginator  
+{
+  width: 100%;
+  margin-top: 20px;
+}
+
+.mat-tab-label
+{
+  color:gray !important;
+  min-width: 25px !important;
+  padding: 5px;
+  background-color:transparent;
+  color:white;
+  font-weight: 700;
+}
+
+.container 
+{
+  width: 96%;
+  margin: auto;
+  margin-top: 20px;
+  align-content: center;
+}
+
+.trainingImages
+{
+  position: relative;
+  overflow: hidden;  
+  float: left;
+  margin: 5px;
+}
+.info_on_img_left
+{
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  margin-top:0px !important;
+  color:white !important;
+  background-color: green;
+  padding:2px;
+}
+
+.info_on_img_rigth
+{
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  margin-top:0px !important;
+  color:white !important;
+  background-color: green;
+  padding:2px;
+}
+.example-headers-align .mat-expansion-panel-header-title,
+.example-headers-align .mat-expansion-panel-header-description {
+  flex-basis: 0;
+}
+
+.example-headers-align .mat-expansion-panel-header-description {
+  justify-content: space-between;
+  align-items: center;
+}
+
+mat-form-field 
+{
+  margin-right: 12px;
+}
+
+.sameline 
+{
+  display:inline-flex;
+  justify-content: space-between;
+  align-items: center;
+  margin:10px;
+}
+
+h3
+{
+  margin:20px !important;
+}
+
+.center
+{
+  height: 100px;
+  width: 100%;
+
+  display:inline-flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer
+{
+  text-align:center;
+  height: 170px;
+  width: 100%;
+  background-color:#6A1B9A;
+  margin: auto;
+  align-items: center;
+  color:white;
+}

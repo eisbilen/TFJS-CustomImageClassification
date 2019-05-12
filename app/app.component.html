@@ -1,47 +1,210 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
-  <h1>
-    Welcome to {{ title }}!
-  </h1>
+
+<mat-toolbar color="primary">
+
+  <mat-toolbar-row>
+
+    <button mat-button (click)="loadCSV()">Prepare the Training Dataset</button>
+    <button mat-button (click)="train()">Train the AI Model</button>
+
+    <span class="example-spacer"></span>
+    
+    <a href="https://medium.com/@erdemisbilen/building-mobilenet-based-custom-image-classification-model-on-the-browser-with-tensorflow-js-f1796ed24934">     
+      <mat-icon class="example-icon" aria-hidden="false" aria-label="Example heart icon">favorite</mat-icon>
+    </a>  
+
+  </mat-toolbar-row>
+
+</mat-toolbar>
+
+<div class="container">
+
+  <mat-accordion class="example-headers-align">
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Tensorflow.js and Angular
+        </mat-panel-title>
+        <mat-panel-description>
+          Building Mobilenet Based Custom Image Classification Model on the Browser 
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      There are several ways of fine tuning a deep learning model but doing this on the web browser with WebGL acceleration is something that we experienced not such a long time ago, with the introduction of Tensorflow.js. In this example, I will use Tensorflow.js together with Angular to build a Web App which trains a convolutional neural network to detect malaria infected cells with the help of Mobilenet and Kaggle dataset containing 27.558 infected and uninfected cell images.
+    </mat-expansion-panel>
+    
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+            Mobilenet as Base Model
+        </mat-panel-title>
+        <mat-panel-description>
+            Mobilenet as a Base Model for Our Custom Image Classifier
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+          <p>As I mentioned above, I will use mobilenet as a base model for our custom image classifier. The pre-trained mobilenet model, which is tensorflow.js compatible, is relatively small, 20MB, and can be directly downloaded from the Google api storage folder.</p>
+          <p>There will be 2 classes, which are uninfected and parasitized cells, we would like to classify with our custom model whereas the original mobilenet model is trained to classify 1000 different objects.</p>
+          <p>I will use all mobilenet layers other than last 5 layers, and add a dense layer with 2 units and softmax activation on top of this truncated model to make the modified model suitable for our classification task.</p>
+          <p>We will not train all layers, as this will require a lot of time and computational power. It is also not necessary for our case as we use a pre-trained model which has a lot of representations learned already. Instead, we will freeze majority of the layers and keep only last 2 ones trainable.</p>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+                Training the Model On the Browser: Step 1
+            </mat-panel-title>
+            <mat-panel-description>
+              Load the CSV file which you can download from the link on Medium Post
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+         
+          <p>Please load the CSV file containing the image src and class information. You can download the file following the link on this medium post</p>
+
+          <div matTooltip="Load the CSV file containing list of training images" >
+            <input type="file" (change)="onFileSelect($event.target)" name="myfile">
+          </div>  
+        </mat-expansion-panel>
+
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                Training the Model On the Browser: Step 2
+              </mat-panel-title>
+              <mat-panel-description>
+                Prepared the Training Dataset
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+           
+            <p>If you complete Step 1, please click 'Prepare the Training Dataset' button in top Toolbar</p>
+            <p>This will load the images in assets forlder of the angular project into the browser.
+            You can see the images on the browser in the 'Training Images' tab in 'Dataset and Training Metrics' section
+            You can see the dataset as a table as well in the 'Training Dataset' tab in 'Dataset and Training Metrics' section.</p>
+          </mat-expansion-panel>
+
+          <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  Training the Model On the Browser: Step 3
+                </mat-panel-title>
+                <mat-panel-description>
+                  Fine Tuning the Model
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+             
+              <p>If you complete Step 2, please click 'Train the AI Model' button in top Toolbar</p>
+              <p>As we prepared the data and the model, it is now time to fine tune the model so that it can classify the malaria infected cell images. In order to reduce the time for training process, I will use 120 images in total, training process of 5 epochs with data batches each containing 24 images. Loss function to be categoricalCrossentropy and the adam optimizer to be used in training with relatively small learning rate value. I used onBatchEnd callback function which is provided by Keras to write the training metrics into the console for each epoch. We have to dispose the tensors to free up the memory once the training is completed. As a final step, we will save the trained model into our local storage to use it later for inference.</p>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    Dataset and Training Metrics
+                  </mat-panel-title>
+                  <mat-panel-description>
+                    Training Images,Targets and Training Metrics
+                  </mat-panel-description>
+                </mat-expansion-panel-header>
+               
+             
+                <mat-tab-group color="primary" stype="color: black !important" backgroundColor="gray" mat-align-tabs="center">
+    
+                    <mat-tab label="Training Images"> 
+                  
+                      <div class="container">
+                        <mat-progress-bar color="warn" class="progressbar" mode="determinate" [value]="ProgressBarValue"></mat-progress-bar>
+                        <div *ngFor="let dt of tableRows; let i = index" >
+                            <div class="trainingImages">
+                              <img width="224" height="224" src="{{dt.ImageSrc}}" [attr.id]="i" />
+                              <h5 class="info_on_img_left">Img Id: {{i}}</h5>
+                              <h5 class="info_on_img_rigth">{{dt.Class}}</h5>
+                            </div>
+                        </div> 
+                      </div>
+                      
+                    </mat-tab>
+                  
+                    <mat-tab label="Training Dataset"> 
+                      
+                      <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+                      <table mat-table #table [dataSource]="dataSource" class="mat-elevation-z8">
+                      
+                          <!-- ImageSrc Column -->
+                          <ng-container fxFlex="70" matColumnDef="ImageSrc" >
+                            <th mat-header-cell *matHeaderCellDef> Image Src </th>
+                            <td mat-cell *matCellDef="let element"> {{element.ImageSrc}} </td>
+                            <td mat-footer-cell *matFooterCellDef> Total </td>
+                          </ng-container>
+                        
+                          <!-- Class Column -->
+                          <ng-container fxFlex="10" matColumnDef="Class" >
+                              <th mat-header-cell *matHeaderCellDef> Class </th>
+                              <td mat-cell *matCellDef="let element"> {{element.Class}} </td>
+                              <td mat-footer-cell *matFooterCellDef> N/A </td>
+                          </ng-container>
+                      
+                          <!-- Label_X1 Column -->
+                          <ng-container fxFlex="10" matColumnDef="Label_X1" >
+                              <th mat-header-cell *matHeaderCellDef> Uninfected </th>
+                              <td mat-cell *matCellDef="let element"> {{element.LabelX1}} </td>
+                              <td mat-footer-cell *matFooterCellDef> {{getTotalUninfected()}} </td>
+                          </ng-container>
+                      
+                          <!-- Position Column -->
+                          <ng-container fxFlex="10" matColumnDef="Label_X2" >
+                              <th mat-header-cell *matHeaderCellDef> Parasitized </th>
+                              <td mat-cell *matCellDef="let element"> {{element.LabelX2}} </td>
+                              <td mat-footer-cell *matFooterCellDef> {{getTotalPAratisized()}} </td>
+                          </ng-container>
+                      
+                          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                          <tr mat-footer-row *matFooterRowDef="displayedColumns"></tr>
+                      
+                      </table>                   
+                    </mat-tab>
+                                  
+                    <mat-tab label="Training Metrics"> 
+                  
+                    <div *ngFor="let dt of traningMetrics; let i = index" >
+                        <div class="sameline">
+                          
+                          <h3>Batch Number  : {{i+1}}</h3>
+                          <h3>Accuracy      : {{dt.acc}}</h3>
+                          <h3>Cross Entropy : {{dt.ce}}</h3>
+                          <h3>Loss          : {{dt.loss}}</h3>
+                        
+                        </div> 
+                        <mat-divider></mat-divider>
+                    </div>
+                   
+                    </mat-tab>                  
+                  </mat-tab-group>
+              </mat-expansion-panel>
+  </mat-accordion>
+
 </div>
-<canvas id="canvas"></canvas>
-<video id="vid" width="224" height="224"></video>
-<div class="form-group">
-  <input type="file" (change)="onFileSelect($event.target)" name="myfile">
+<div class="center"></div>
+<div class="footer">
+  <p>...</p>
+  <h3>
+      If you found this project helpful, please 
+      <a href="https://medium.com/@erdemisbilen/building-mobilenet-based-custom-image-classification-model-on-the-browser-with-tensorflow-js-f1796ed24934">
+      go it's medium blog 
+      </a>     
+      and give it some applause, share it to help others to find it !
+  </h3>
+<h3>
+  Reach out at erdemisbilen@gmail.com, if you have any question.
+</h3>  
+<h3>
+  Follow me on 
+  <a href="https://medium.com/@erdemisbilen">
+    Medium
+  </a>  
+  , or connect me on 
+  <a href="https://www.linkedin.com/in/erdem-isbilen/">
+    LinkedIn
+  </a>
+
+</h3>      
+
 </div>
-
-
-<div  >
-  <img *ngFor="let src_show of src; let i = index" width="224" height="224" src="{{src_show}}" [attr.id]="i" />
-</div>
-
-
-<button type="submit" (click)="train()">Train</button>
-<button type="submit" (click)="predict()">Predict</button>
-
-<p>CSV:<input type="text" id="text"  ></p>
-
-<div id="status">Loading model...</div>
-<button id="load-hosted-model" disabled="true">Load Hosted model</button>
-<button id="test" disabled="true">Test model</button>
-
-<div>
-  <canvas id="data-canvas" width="224" height="224"></canvas>
-</div>
-
-<div>
-  <div>
-    <span>Inference time (ms):</span>
-    <span id="inference-time-ms"></span>
-  </div>
-  <div>
-    <span>True object class:</span>
-    <span class="shape-class" id="true-object-class"></span>
-  </div>
-  <div>
-    <span>Predicted object class:</span>
-    <span class="shape-class" id="predicted-object-class"></span>
-  </div>
-</div>
-
 
