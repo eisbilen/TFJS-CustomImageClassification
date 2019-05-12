@@ -1,0 +1,47 @@
+<!--The content below is only a placeholder and can be replaced.-->
+<div style="text-align:center">
+  <h1>
+    Welcome to {{ title }}!
+  </h1>
+</div>
+<canvas id="canvas"></canvas>
+<video id="vid" width="224" height="224"></video>
+<div class="form-group">
+  <input type="file" (change)="onFileSelect($event.target)" name="myfile">
+</div>
+
+
+<div  >
+  <img *ngFor="let src_show of src; let i = index" width="224" height="224" src="{{src_show}}" [attr.id]="i" />
+</div>
+
+
+<button type="submit" (click)="train()">Train</button>
+<button type="submit" (click)="predict()">Predict</button>
+
+<p>CSV:<input type="text" id="text"  ></p>
+
+<div id="status">Loading model...</div>
+<button id="load-hosted-model" disabled="true">Load Hosted model</button>
+<button id="test" disabled="true">Test model</button>
+
+<div>
+  <canvas id="data-canvas" width="224" height="224"></canvas>
+</div>
+
+<div>
+  <div>
+    <span>Inference time (ms):</span>
+    <span id="inference-time-ms"></span>
+  </div>
+  <div>
+    <span>True object class:</span>
+    <span class="shape-class" id="true-object-class"></span>
+  </div>
+  <div>
+    <span>Predicted object class:</span>
+    <span class="shape-class" id="predicted-object-class"></span>
+  </div>
+</div>
+
+
